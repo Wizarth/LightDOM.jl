@@ -1,0 +1,7 @@
+name = "LightDOM"
+uuid = "051b2514-252f-4627-a2ae-bc6cbc0c2138"
+authors = ["Peter Newman <wizarth@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
