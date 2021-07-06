@@ -2,24 +2,15 @@ module LightDOM
 
 import Base: convert,
 	length,
-	show
+	push!
 
 export 	Node,
 	TextNode,
 	Element,
 	text,
-	count
-
-#
-# Utility functions
-#
-
-function _showindent(io::IO)
-	indent = get(io, :indent, 0)
-	for _ in 1:indent
-		write(io, "\t")
-	end
-end
+	count,
+	children,
+	props
 
 
 #
@@ -49,18 +40,13 @@ text(xs...) = TextNode(string(xs...))
 Base.convert(::Type{Node}, s::AbstractString) = text(s)
 
 
-function Base.show(io::IO, el::TextNode)
-	_showindent(io)
-	show(io, el.text)
-end
-
 #
 # Generic Element
 #
 
 const Props = Dict{Any,Any} 
 
-struct Element{ns, tag} <: Node 
+struct Element{ns, tag} <: Node
 	children::Vector{Union{TextNode,Element}}
 	props::Props
 end
@@ -76,27 +62,7 @@ function namespace(e::Element{ns}) where ns
 	ns
 end
 
-Base.length(::TextNode) = 0
-Base.length(e::Element) = i + map(Base.length, e.children) |> sum
-
-function Base.show(io::IO, e::Element{ns, tag}) where{ns, tag}
-	_showindent(io)
-	write(io,"(")
-	write(io, namespace(e))
-	write(io, ":")
-	write(io, tag)
-	for (prop, value) in e.props
-		write(io, " ")
-		write(io, prop)
-		write(io,"=")
-		show(io, value)
-		write(io, "")
-	end
-	child_io = IOContext(io, :indent => get(io, :indent, 0) + 1)
-	for child in e.children
-		show(child_io, child)
-	end
-	write(io, ")");
-end
+include("show.jl")
+include("collection.jl")
 
 end # module
