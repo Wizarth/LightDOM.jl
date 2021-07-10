@@ -29,8 +29,10 @@ function Base.show(io::IO, mime::MIME"text/plain", e::Element{ns, tag}) where{ns
 	compact = get(io, :compact, false)
 	compact || _showindent(io)
 	write(io,"(")
-	write(io, namespace(e))
-	write(io, ":")
+	if ns !== :nothing
+		write(io, ns)
+		write(io, ":")
+	end
 	write(io, tag)
 	for (prop, value) in e.props
 		write(io, " ")

@@ -54,7 +54,7 @@ Element{ns, tag}() where {ns, tag} = Element{ns,tag}([], Dict())
 Element(ns, tag, children, props) = Element{Symbol(ns),Symbol(tag)}(children, props)
 Element(ns::Symbol, tag::Symbol, children, props) = Element{ns, tag}(children, props)
 Element(ns, tag, children=[], kwargs...) = Element(ns, tag, children, Props(kwargs))
-Element(tag, children::AbstractVector=[]; kwargs...) = Element(:xhtml, tag, children, Props(kwargs))
+Element(tag, children::AbstractVector=[]; kwargs...) = Element(:nothing, tag, children, Props(kwargs))
 
 Base.convert(::Type{Vector{Node}}, x::Node) = [x]
 
