@@ -51,12 +51,13 @@ struct Element{ns, tag} <: Node
 	props::Props
 end
 Element{ns, tag}() where {ns, tag} = Element{ns,tag}([], Dict())
-Element(ns, tag, children, props) = Element{Symbol(ns),Symbol(tag)}(children, props)
 Element(ns::Symbol, tag::Symbol, children, props) = Element{ns, tag}(children, props)
-Element(ns, tag, children=[], kwargs...) = Element(ns, tag, children, Props(kwargs))
-Element(tag, children::AbstractVector=[]; kwargs...) = Element(:nothing, tag, children, Props(kwargs))
+Element(ns::Symbol, tag::Symbol, children=[], kwargs...) = Element(ns, tag, children, Props(kwargs))
+Element(tag::Symbol, children::AbstractVector=[]; kwargs...) = Element(:nothing, tag, children, Props(kwargs))
+Element(tag::Symbol, textContent::AbstractString; kwargs...) = Element(:nothing, tag, text(textContent), Props(kwargs))
+Element(tag::Symbol, child::Node; kwargs...) = Element(:nothing, tag, child, Props(kwargs))
 
-Base.convert(::Type{Vector{Node}}, x::Node) = [x]
+Base.convert(::Type{Vector{Union{TextNode,Element}}}, x::Node) = Vector{Union{TextNode,Element}}([x])
 
 function namespace(e::Element{ns}) where ns
 	ns

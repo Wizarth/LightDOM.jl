@@ -17,7 +17,7 @@ end
 
 function Base.show(io::IO, mime::MIME"text/plain", el::TextNode)
 	compact = get(io, :compact, false)
-	_compact || _showindent(io)
+	compact || _showindent(io)
 	show(io, mime, el.text)
 end
 
