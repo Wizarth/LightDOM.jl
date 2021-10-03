@@ -9,6 +9,8 @@ export 	Node,
 	Element,
 	text,
 	count,
+	namespace,
+	tag,
 	children,
 	props
 
@@ -46,13 +48,17 @@ Base.convert(::Type{Node}, s::AbstractString) = text(s)
 
 const Props = Dict{Any,Any} 
 
+"""
+	Namespace and tag are part of the type (rather than a prop) to allow
+	dispatch to provide overrides of methods for specific namespaces/tags
+"""
 struct Element{ns, tag} <: Node
 	children::Vector{Union{TextNode,Element}}
 	props::Props
 end
 Element{ns, tag}() where {ns, tag} = Element{ns,tag}([], Dict())
 Element(ns::Symbol, tag::Symbol, children, props) = Element{ns, tag}(children, props)
-Element(ns::Symbol, tag::Symbol, children=[], kwargs...) = Element(ns, tag, children, Props(kwargs))
+Element(ns::Symbol, tag::Symbol, children=[]; kwargs...) = Element(ns, tag, children, Props(kwargs))
 Element(tag::Symbol, children::AbstractVector=[]; kwargs...) = Element(:nothing, tag, children, Props(kwargs))
 Element(tag::Symbol, textContent::AbstractString; kwargs...) = Element(:nothing, tag, text(textContent), Props(kwargs))
 Element(tag::Symbol, child::Node; kwargs...) = Element(:nothing, tag, child, Props(kwargs))
@@ -61,6 +67,9 @@ Base.convert(::Type{Vector{Union{TextNode,Element}}}, x::Node) = Vector{Union{Te
 
 function namespace(e::Element{ns}) where ns
 	ns
+end
+function tag(e::Element{ns,t}) where {ns, t}
+	t
 end
 
 include("show.jl")
